@@ -1,0 +1,94 @@
+1、把附件图像中的直方图画出。
+```
+[f,map]=imread('elain1.bmp');
+map(end:255,:)=0;
+pic=ind2gray(f,map);
+[m,n]=size(pic);
+p=zeros(1,256);
+for i=0:255
+    p(i+1)=length(find(pic==i))/(m*n);
+end
+figure(1);
+imshow(f,map);
+title('原始图像');
+figure(2);
+bar(0:255,p);
+axis([0 255 0 0.03]);
+title('woman2直方图');
+```
+2、把所有图像进行直方图均衡；输出均衡后的图像和源图像进行比对；分析改善内容；
+```
+[f,map]=imread('woman2.bmp');
+map(end:255,:)=0;
+figure(1);
+imshow(f,map);
+title('原始图像');
+g=histeq(f);
+figure(2);
+imshow(g,map);
+title('均衡后图像');
+pic=ind2gray(g,map);
+[m,n]=size(pic);
+p=zeros(1,256);
+for i=0:255
+    p(i+1)=length(find(pic==i))/(m*n);
+end
+figure(3);
+bar(0:255,p);
+axis([0 255 0 0.05]);
+title('均衡直方图');
+```
+3、进一步把图像按照对源图像直方图的观察，各自自行指定不同源图像的直方图，进行直方图匹配，进行图像增强；
+```
+[f1,map]=imread('citywall2.bmp');%原始图像
+map(end:255,:)=0;
+p1=ind2gray(f1,map);
+[f2,map2]=imread('citywall.bmp')%匹配图像
+p2=ind2gray(f2,map2);
+h=imhist(p2,256);
+g=histeq(p1,h);
+figure;
+subplot(1,2,1);
+imshow(p1,map);
+title('原始图像');
+subplot(1,2,2);
+imshow(g,map2);
+title('增强图像');
+figure;
+subplot(3,1,1);
+imhist(p1,map);
+axis([0 255 0 10000]);
+title('原图直方图');
+subplot(3,1,2);
+imhist(p2,map2);
+axis([0 255 0 10000]);
+title('匹配图直方图');
+subplot(3,1,3);
+imhist(g,map2);
+axis([0 255 0 10000]);
+title('增强图直方图');
+```
+4、对elain和lena图像进行7*7的局部直方图增强；
+```
+f1=imread('lena.bmp');
+g1=adapthisteq(f1,'NumTiles',[7 7]);
+subplot(1,2,1);
+imshow(f1);
+title('原始图像');
+subplot(1,2,2);
+imshow(g1);
+title('7*7增强图像');
+```
+5、利用直方图对图像elain和woman进行分割；
+```
+f1=imread('woman.bmp');
+subplot(1,2,1);
+imshow(f1);
+title('原始图像');
+level=graythresh(f1);
+bw=im2bw(f1,level);
+subplot(1,2,2);
+imshow(bw);
+title('阈值变换法分割图像');
+```
+
